@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import viewchat from '../assets/chats.png';
 import newChat from '../assets/new-chat.png';
+import PropTypes from 'prop-types';
 
-function Menu() {
+function Menu({ handleNewChat }) {
     const [isMenuCollapsed, setIsMenuCollapsed] = useState(false); // Controla si el menú está colapsado
 
     return (
@@ -12,7 +13,7 @@ function Menu() {
                 <button onClick={() => setIsMenuCollapsed(!isMenuCollapsed)}>
                     <img src={viewchat} alt="Ver chats existentes" />
                 </button>
-                <button>
+                <button onClick={() => handleNewChat()}>
                     <img src={newChat} alt="Iniciar nuevo chat" />
                 </button>
             </div>
@@ -36,5 +37,9 @@ function Menu() {
         </aside>
     );
 }
+
+Menu.propTypes = {
+    handleNewChat: PropTypes.func.isRequired,
+};
 
 export default Menu;

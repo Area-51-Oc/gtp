@@ -4,15 +4,22 @@ import mensaje from '../assets/mensaje.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons'
 import { useState } from 'react'
+import PropTypes from 'prop-types';
 
-function Main() {
+function Main({ handleConversacion }) {
     const [ocultarConsejos, setOcultarConsejos] = useState(false)
 
-    // Función para manejar el cambio en el contenido del textarea
     const handleInputChange = (e) => {
         const textarea = e.target;
-        textarea.style.height = "auto"; // Reseteamos la altura antes de recalcularla
-        textarea.style.height = `${textarea.scrollHeight}px`; // Ajustamos la altura según el contenido
+        textarea.style.height = "auto";
+        textarea.style.height = `${textarea.scrollHeight}px`;
+    };
+
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault(); 
+            handleConversacion();
+        }
     };
 
     const handleOcultarConsejos = () => {
@@ -28,7 +35,7 @@ function Main() {
                 <p>OC AI Chat</p>
             </div>
 
-            {!ocultarConsejos ?
+            {!ocultarConsejos ? 
                 <>
                     <div className="consejos">
                         <div className="consejo">
@@ -50,7 +57,6 @@ function Main() {
                     </div>
                     <p className="ocultar-consejos" onClick={handleOcultarConsejos}>Ocultar consejos</p>
                 </>
-
                 :
                 <h1 className='ayuda'>¿Con qué puedo ayudarte?</h1>
             }
@@ -59,15 +65,19 @@ function Main() {
                 <textarea
                     className='input-seart'
                     onInput={handleInputChange}
+                    onKeyDown={handleKeyDown}
                     placeholder="Escribe tu mensaje..."
-                >
-
-                </textarea>
-                <button>
+                />
+                <button onClick={() => handleConversacion()}>
                     <FontAwesomeIcon icon={faArrowRight} />
                 </button>
             </div>
         </main>
     )
 }
+
+Main.propTypes = {
+    handleConversacion: PropTypes.func.isRequired,
+};
+
 export default Main

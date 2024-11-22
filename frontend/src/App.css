@@ -9,20 +9,25 @@
 
 /* Personalizar scrollbar */
 ::-webkit-scrollbar {
-  width: 6px; /* Anchura del scrollbar */
+  width: 6px;
+  /* Anchura del scrollbar */
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent; /* Fondo transparente */
+  background: transparent;
+  /* Fondo transparente */
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.5); /* Color del "pulgar" (scroll) con transparencia */
-  border-radius: 10px; /* Esquinas redondeadas */
+  background: rgba(255, 255, 255, 0.5);
+  /* Color del "pulgar" (scroll) con transparencia */
+  border-radius: 10px;
+  /* Esquinas redondeadas */
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.7); /* Cambio de color al pasar el cursor */
+  background: rgba(255, 255, 255, 0.7);
+  /* Cambio de color al pasar el cursor */
 }
 
 /*----- Container -----*/
@@ -146,7 +151,6 @@
   width: 100%;
 }
 
-
 /*----- Main -----*/
 .main {
   flex: 1;
@@ -205,6 +209,7 @@
 .consejo:first-child {
   box-shadow: 0 0 80px 10px #2D52964D;
 }
+
 .consejo:nth-child(2) {
   box-shadow: 0 0 80px 10px #C453334D;
 }
@@ -228,7 +233,7 @@
   text-align: center;
   font-size: 18px;
   color: #fff;
-  margin-top: 20px;  
+  margin-top: 20px;
   cursor: pointer;
 }
 
@@ -288,4 +293,43 @@
   justify-content: center;
   align-items: center;
   cursor: pointer;
+}
+
+/*----- Conversaciones -----*/
+.conversaciones {
+  padding: 12px;
+  color: #fff;
+  flex: 1;
+  max-height: 820px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.conversaciones .right {
+  display: flex;
+  gap: 1rem;
+  align-self: flex-end;
+}
+
+.right .chat-right {
+  width: 550px;
+  background-color: #2B2B2B;
+  padding: 8px;
+  border-radius: 12px 12px 0 12px;
+}
+
+.conversaciones .chat-left {
+  width: 740px;
+  padding: 8px;
+  align-self: flex-start;
+
+  display: flex;
+  gap: 1rem;
+}
+
+.conversaciones .img img {
+  width:50px;
+  height:50px;
 }
