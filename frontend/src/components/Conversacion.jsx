@@ -1,54 +1,60 @@
-import { faArrowRight } from "@fortawesome/free-solid-svg-icons"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import logo from '../assets/oc-ia.png'
-import foto from '../assets/mi-foto.jpg'
-import { useState } from 'react'
+import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import logo from '../assets/oc-ia.png';
+import foto from '../assets/mi-foto.jpg';
+import { useState, useEffect, useRef } from 'react';
 
 function Conversacion() {
-    // Estado para almacenar el mensaje del usuario
     const [message, setMessage] = useState('');
-    // Estado para almacenar la conversación
     const [conversation, setConversation] = useState([
-        {
-            sender: 'bot',
-            text: '¡Hola! ¿En qué puedo ayudarte hoy?'
-        }
+        { sender: 'bot', text: '¡Hola! ¿En qué puedo ayudarte hoy?', animate: false }
     ]);
 
-    // Función para manejar el cambio en el contenido del textarea
-    const handleInputChange = (e) => {
-        const textarea = e.target;
-        textarea.style.height = "auto"; // Reseteamos la altura antes de recalcularla
-        textarea.style.height = `${textarea.scrollHeight}px`; // Ajustamos la altura según el contenido
-        setMessage(e.target.value); // Actualiza el mensaje que está escribiendo el usuario
+    const conversationEndRef = useRef(null);
+
+    // Ajustar el scroll al final cada vez que cambie la conversación
+    useEffect(() => {
+        conversationEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [conversation]);
+
+    // Función para añadir animación al nuevo mensaje
+    const addMessageWithAnimation = (newMessage) => {
+        setConversation((prevConversation) => [
+            ...prevConversation,
+            { ...newMessage, animate: true } // Agregar flag de animación
+        ]);
+
+        // Remover animación después de 3 segundos
+        setTimeout(() => {
+            setConversation((prevConversation) =>
+                prevConversation.map((msg, index) =>
+                    index === prevConversation.length ? { ...msg, animate: false } : msg
+                )
+            );
+        }, 3000);
     };
 
-    // Función para manejar el envío del mensaje
+    const handleInputChange = (e) => {
+        const textarea = e.target;
+        textarea.style.height = "auto";
+        textarea.style.height = `${textarea.scrollHeight}px`;
+        setMessage(e.target.value);
+    };
+
     const handleSendMessage = () => {
         if (message.trim()) {
-            // Añadir el mensaje del usuario a la conversación
-            setConversation([...conversation, { sender: 'user', text: message }]);
-
-            // Respuesta del "bot" (puedes reemplazar esto con lógica más compleja)
-            setConversation(prevConversation => [
-                ...prevConversation,
-                { sender: 'bot', text: `Has escrito: "${message}"` }
-            ]);
-
-            // Limpiar el input
+            addMessageWithAnimation({ sender: 'user', text: message });
+            addMessageWithAnimation({ sender: 'bot', text: `Has escrito: "${message}"` });
             setMessage('');
-
-            // Restablecer el tamaño del textarea
             const textarea = document.querySelector('.input-seart');
-            textarea.style.height = 'auto'; // Restablece la altura
+            textarea.style.height = 'auto';
         }
     };
 
-    // Función para manejar el evento de la tecla Enter
     const handleKeyDown = (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault(); // Prevenimos el salto de línea al presionar Enter
-            handleSendMessage(); // Enviamos el mensaje
+            e.preventDefault();
+            handleSendMessage();
         }
     };
 
@@ -57,7 +63,11 @@ function Conversacion() {
             <div className="conversaciones">
                 {/* Mostrar la conversación */}
                 {conversation.map((msg, index) => (
-                    <div key={index} className={msg.sender === 'bot' ? 'chat-left' : 'right'}>
+                    <div
+                        key={index}
+                        className={`${msg.sender === 'bot' ? 'chat-left' : 'right'} ${msg.animate ? 'message-animate' : ''
+                            }`}
+                    >   
                         {/* Si es del bot, imagen primero */}
                         {msg.sender === 'bot' ? (
                             <>
@@ -81,14 +91,15 @@ function Conversacion() {
                         )}
                     </div>
                 ))}
+                <div ref={conversationEndRef}></div>
             </div>
 
             <div className="input-chat">
                 <textarea
                     className="input-seart"
-                    value={message} // Enlaza el valor con el estado
-                    onInput={handleInputChange} // Ajusta la altura al escribir
-                    onKeyDown={handleKeyDown} // Envía el mensaje al presionar Enter
+                    value={message}
+                    onInput={handleInputChange}
+                    onKeyDown={handleKeyDown}
                     placeholder="Escribe tu mensaje..."
                 />
                 <button onClick={handleSendMessage}>
