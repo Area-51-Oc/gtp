@@ -10,24 +10,19 @@
 /* Personalizar scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
-  /* Anchura del scrollbar */
 }
 
 ::-webkit-scrollbar-track {
   background: transparent;
-  /* Fondo transparente */
 }
 
 ::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.5);
-  /* Color del "pulgar" (scroll) con transparencia */
   border-radius: 10px;
-  /* Esquinas redondeadas */
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.7);
-  /* Cambio de color al pasar el cursor */
 }
 
 /*----- Container -----*/

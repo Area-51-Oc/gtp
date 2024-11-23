@@ -2,68 +2,101 @@ import { faArrowRight } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import logo from '../assets/oc-ia.png'
 import foto from '../assets/mi-foto.jpg'
+import { useState } from 'react'
 
 function Conversacion() {
+    // Estado para almacenar el mensaje del usuario
+    const [message, setMessage] = useState('');
+    // Estado para almacenar la conversación
+    const [conversation, setConversation] = useState([
+        {
+            sender: 'bot',
+            text: '¡Hola! ¿En qué puedo ayudarte hoy?'
+        }
+    ]);
+
     // Función para manejar el cambio en el contenido del textarea
     const handleInputChange = (e) => {
         const textarea = e.target;
         textarea.style.height = "auto"; // Reseteamos la altura antes de recalcularla
         textarea.style.height = `${textarea.scrollHeight}px`; // Ajustamos la altura según el contenido
+        setMessage(e.target.value); // Actualiza el mensaje que está escribiendo el usuario
+    };
+
+    // Función para manejar el envío del mensaje
+    const handleSendMessage = () => {
+        if (message.trim()) {
+            // Añadir el mensaje del usuario a la conversación
+            setConversation([...conversation, { sender: 'user', text: message }]);
+
+            // Respuesta del "bot" (puedes reemplazar esto con lógica más compleja)
+            setConversation(prevConversation => [
+                ...prevConversation,
+                { sender: 'bot', text: `Has escrito: "${message}"` }
+            ]);
+
+            // Limpiar el input
+            setMessage('');
+
+            // Restablecer el tamaño del textarea
+            const textarea = document.querySelector('.input-seart');
+            textarea.style.height = 'auto'; // Restablece la altura
+        }
+    };
+
+    // Función para manejar el evento de la tecla Enter
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault(); // Prevenimos el salto de línea al presionar Enter
+            handleSendMessage(); // Enviamos el mensaje
+        }
     };
 
     return (
         <main className="main">
             <div className="conversaciones">
-                <div className="right">
-                    <div className="chat-right">
-                        <p>
-                            Que hacer en ocasiones donde una persona pone excusas a la hora de
-                            ofrecer servicios de call center
-                        </p>
+                {/* Mostrar la conversación */}
+                {conversation.map((msg, index) => (
+                    <div key={index} className={msg.sender === 'bot' ? 'chat-left' : 'right'}>
+                        {/* Si es del bot, imagen primero */}
+                        {msg.sender === 'bot' ? (
+                            <>
+                                <div className="img">
+                                    <img src={logo} alt="Bot" />
+                                </div>
+                                <div className="chat-left">
+                                    <p>{msg.text}</p>
+                                </div>
+                            </>
+                        ) : (
+                            // Si es del usuario, mensaje primero, luego imagen
+                            <>
+                                <div className="chat-right">
+                                    <p>{msg.text}</p>
+                                </div>
+                                <div className="img">
+                                    <img src={foto} alt="Usuario" />
+                                </div>
+                            </>
+                        )}
                     </div>
-                    <div className="img">
-                        <img src={foto} alt="" />
-                    </div>
-                </div>
-
-                <div className="chat-left">
-                    <div className="img">
-                        <img src={logo} alt="" />
-                    </div>
-                    <p>
-                        Manejar excusas durante la oferta de servicios en un call center requiere empatía, paciencia y técnicas efectivas de persuasión. Aquí tienes algunas estrategias:
-                        <br /><br />
-                        1. Escucha activa y empatía
-                        Entiende la excusa: Permite que la persona explique su situación. Esto genera confianza y demuestra interés genuino.
-                        Valida sus preocupaciones: Responde con frases como  &quot;Entiendo que esto pueda ser un inconveniente para usted.&quot;
-                        <br /><br />
-                        2. Identifica la objeción real
-                        A menudo, las excusas son una manera de evitar rechazos directos. Intenta descubrir qué preocupa realmente al cliente, ya sea el precio, el tiempo o la utilidad del servicio.
-                        Ejemplo: Si alguien dice &quot;Ahora no tengo tiempo&quot;, podrías responder:&quot;Entiendo, ¿cuándo sería un buen momento para discutir cómo este servicio puede ahorrarle tiempo a futuro?&quot;
-                        <br /><br />
-                        3. Ofrece soluciones personalizadas
-                        Si la excusa es económica: Ofrece alternativas como descuentos o planes de pago.
-                        Si es falta de tiempo: Resalta cómo el servicio puede facilitar su día a día.
-                        <br /><br />
-                        4. Resalta los beneficios clave
-                        Utiliza frases que conecten emocionalmente, como:
-                    </p>
-                </div>
+                ))}
             </div>
 
             <div className="input-chat">
                 <textarea
-                    className='input-seart'
-                    onInput={handleInputChange}
+                    className="input-seart"
+                    value={message} // Enlaza el valor con el estado
+                    onInput={handleInputChange} // Ajusta la altura al escribir
+                    onKeyDown={handleKeyDown} // Envía el mensaje al presionar Enter
                     placeholder="Escribe tu mensaje..."
-                >
-
-                </textarea>
-                <button>
+                />
+                <button onClick={handleSendMessage}>
                     <FontAwesomeIcon icon={faArrowRight} />
                 </button>
             </div>
         </main>
-    )
+    );
 }
-export default Conversacion
+
+export default Conversacion;
