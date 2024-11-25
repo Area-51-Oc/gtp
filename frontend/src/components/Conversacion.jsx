@@ -1,8 +1,9 @@
-import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import ReactMarkdown from 'react-markdown'; // Importamos la librería
 import logo from '../assets/oc-ia.png';
 import foto from '../assets/mi-foto.jpg';
-import { useState, useEffect, useRef } from 'react';
 
 function Conversacion() {
     const [message, setMessage] = useState('');
@@ -10,7 +11,6 @@ function Conversacion() {
         {
             sender: 'bot',
             text: '¡Hola! ¿En qué puedo ayudarte hoy?',
-            animate: false,
         },
     ]);
     const [loading, setLoading] = useState(false);
@@ -21,7 +21,6 @@ function Conversacion() {
         conversationEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [conversation]);
 
-    // Función para manejar el cambio de contenido en el textarea
     const handleInputChange = (e) => {
         const textarea = e.target;
         textarea.style.height = 'auto';
@@ -29,10 +28,8 @@ function Conversacion() {
         setMessage(e.target.value);
     };
 
-    // Función para enviar el mensaje del usuario y consultar la API
     const handleSendMessage = async () => {
         if (message.trim()) {
-            // Añadir el mensaje del usuario a la conversación
             setConversation((prevConversation) => [
                 ...prevConversation,
                 { sender: 'user', text: message },
@@ -42,13 +39,11 @@ function Conversacion() {
             const textarea = document.querySelector('.input-seart');
             textarea.style.height = 'auto';
 
-            // Mostrar "Escribiendo..." mientras se procesa
             setConversation((prevConversation) => [
                 ...prevConversation,
-                { sender: 'bot', text: 'Escribiendo...', animate: true },
+                { sender: 'bot', text: 'Escribiendo...' },
             ]);
 
-            // Llamada a la API
             try {
                 setLoading(true);
                 const response = await fetch(
@@ -64,18 +59,13 @@ function Conversacion() {
 
                 if (response.ok) {
                     const data = await response.json();
-                    // Reemplazar "Escribiendo..." con la respuesta del bot
                     setConversation((prevConversation) => [
-                        ...prevConversation.slice(0, -1), // Eliminar el último mensaje ("Escribiendo...")
-                        { sender: 'bot', text: data.reply, animate: true },
+                        ...prevConversation.slice(0, -1), // Eliminar "Escribiendo..."
+                        { sender: 'bot', text: data.reply },
                     ]);
                 } else {
-                    console.error(
-                        'Error al comunicarse con el servidor:',
-                        response.statusText
-                    );
                     setConversation((prevConversation) => [
-                        ...prevConversation.slice(0, -1), // Eliminar el último mensaje ("Escribiendo...")
+                        ...prevConversation.slice(0, -1),
                         {
                             sender: 'bot',
                             text: 'Lo siento, hubo un problema al procesar tu mensaje.',
@@ -85,7 +75,7 @@ function Conversacion() {
             } catch (error) {
                 console.error('Error de conexión:', error);
                 setConversation((prevConversation) => [
-                    ...prevConversation.slice(0, -1), // Eliminar el último mensaje ("Escribiendo...")
+                    ...prevConversation.slice(0, -1),
                     {
                         sender: 'bot',
                         text: 'Lo siento, no puedo conectarme al servidor en este momento.',
@@ -107,21 +97,21 @@ function Conversacion() {
     return (
         <main className='main'>
             <div className='conversaciones'>
-                {/* Mostrar la conversación */}
                 {conversation.map((msg, index) => (
                     <div
                         key={index}
                         className={`${
                             msg.sender === 'bot' ? 'chat-left' : 'right'
-                        } ${msg.animate ? 'message-animate' : ''}`}
+                        }`}
                     >
                         {msg.sender === 'bot' ? (
                             <>
                                 <div className='img'>
                                     <img src={logo} alt='Bot' />
                                 </div>
-                                <div className='chat-left'>
-                                    <p>{msg.text}</p>
+                                <div>
+                                    {/* Renderizar respuesta como Markdown */}
+                                    <ReactMarkdown>{msg.text}</ReactMarkdown>
                                 </div>
                             </>
                         ) : (
