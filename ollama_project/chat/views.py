@@ -16,7 +16,7 @@ def chat_with_ollama(request):
 
             # Configurar el prompt y el modelo
             prompt = user_message
-            modelo = 'llama3.2'
+            modelo = 'llama3.1'
 
             # Llamar al modelo con el paquete `ollama`
             response = ollama.chat(model=modelo, messages=[
