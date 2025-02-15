@@ -14,15 +14,21 @@ def chat_with_ollama(request):
             if not user_message:
                 return JsonResponse({'error': 'El campo "message" es obligatorio'}, status=400)
 
+            # Definir el mensaje de sistema para establecer el rol del modelo
+            system_prompt = {
+                "role": "system",
+                "content": "Eres un asistente virtual para un CallCenter de la campaña de Claro donde venden Terminales y tecnologia. Tu funcion es ayudarle a los asesores a resolver dudas en cuanto a gestion comercial y objeciones de los clientes"
+            }
+
             # Configurar el prompt y el modelo
-            prompt = user_message
-            modelo = 'llama3.1'
+            modelo = 'llama3.2'
 
             # Llamar al modelo con el paquete `ollama`
             response = ollama.chat(model=modelo, messages=[
+                system_prompt,  # Se establece el comportamiento del asistente
                 {
                     'role': 'user',
-                    'content': prompt
+                    'content': user_message
                 }
             ])
 
